@@ -16,6 +16,16 @@ param(
 
 $ErrorActionPreference = 'Continue'
 
+# ---- 路径配置 ----
+$ProjectRoot = 'D:\Alicia\ExoCore_Project'
+$ExoCoreDir       = Join-Path $ProjectRoot 'ExoCore'
+$ExoCoreDesktopDir = Join-Path $ProjectRoot 'ExoCore-Desktop'
+$LogPath          = Join-Path $ProjectRoot 'hybrid_start.log'
+
+$PgContainer    = 'exocore-pg'
+$NginxContainer = 'exocore-nginx'
+$CertDir         = Join-Path $ProjectRoot 'mkcertpem'
+
 # ---- 关停模式 ----
 if ($Stop) {
     Write-Host "========== ExoCore stop begin =========="
@@ -41,16 +51,6 @@ if ($Stop) {
     Write-Host "========== ExoCore stop end =========="
     exit 0
 }
-
-# ---- 路径配置 ----
-$ProjectRoot = 'D:\Alicia\ExoCore_Project'
-$ExoCoreDir       = Join-Path $ProjectRoot 'ExoCore'
-$ExoCoreDesktopDir = Join-Path $ProjectRoot 'ExoCore-Desktop'
-$LogPath          = Join-Path $ProjectRoot 'hybrid_start.log'
-
-$PgContainer    = 'exocore-pg'
-$NginxContainer = 'exocore-nginx'
-$CertDir         = Join-Path $ProjectRoot 'mkcertpem'
 
 # ---- 辅助函数 ----
 function Write-Log {
