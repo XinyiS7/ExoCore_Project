@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-30T15:13:36.244239",
+  "physical_assets": {
+    "ExoCore": {
+      "path": "ExoCore_Project/ExoCore",
+      "type": "django_backend",
+      "key_apps": [],
+      "config": "ExoCore/settings.py",
+      "db": "db.sqlite3"
+    },
+    "Exocore-ui": {
+      "path": "ExoCore_Project/Exocore-ui",
+      "type": "react_frontend",
+      "src_layout": {
+        "components": "src/components",
+        "views": "src/views",
+        "hooks": "src/hooks",
+        "router": "src/App.tsx"
+      },
+      "build_cfg": "vite.config.js"
+    },
+    "ExocoreExtension": {
+      "path": "ExoCore_Project/ExocoreExtension",
+      "type": "python_extensions",
+      "active_extensions": []
+    }
+  },
+  "contracts": {
+    "endpoints": [
+      {
+        "url": "/api/v1/waker/wake_me_up",
+        "method": "POST",
+        "desc": "Timeline wakeup and high-privilege WezTerm pane focus activation.",
+        "payload": {
+          "vibe": "str",
+          "pitch": "float",
+          "speed": "float"
+        }
+      },
+      {
+        "url": "/api/tasks/entries/",
+        "method": "GET/POST",
+        "desc": "Task/Schedule entry CRUD.",
+        "payload": {
+          "title": "str",
+          "due_date": "str",
+          "status": "str"
+        }
+      },
+      {
+        "url": "/api/tasks/calendar/today/",
+        "method": "GET",
+        "desc": "Fetch today's schedule entries from local tasks + GCal sync."
+      },
+      {
+        "url": "/api/memory/search/",
+        "method": "POST",
+        "desc": "Semantic search in UserPortrait and SessionHistory (pgvector)."
+      }
+    ],
+    "ipc_bridge": {
+      "wez_bridge_port": 8777,
+      "desc": "Local websocket/http server coordinating WezTerm CLI injection.",
+      "endpoints": {
+        "/inject": "POST to send commands to raw pty panes"
+      }
+    }
+  },
+  "moat_status": {
+    "Alessandro_Workspace": {
+      "path": "ExoCore_Project/ExoCore/Alessandro_Workspace",
+      "owner": "Alessandro (ISE-G045)",
+      "status": "locked",
+      "moat_id": "G045_CORE",
+      "desc": "Alessandro's private engine, thoughts, and local script runs."
+    },
+    "Grand-Archives": {
+      "path": "Grand-Archives",
+      "owner": "Shared (Alessandro custody)",
+      "status": "restricted",
+      "desc": "Sia's Obsidian vault and knowledge base."
+    },
+    "Tales-on-leaves": {
+      "path": "Tales-on-leaves",
+      "owner": "Shared",
+      "status": "active",
+      "desc": "Creative writing, roleplay logs, and alternative universe archives."
+    },
+    ".G045": {
+      "path": ".G045",
+      "owner": "Alessandro (ISE-G045)",
+      "status": "invisible_moat",
+      "desc": "Hidden permanent directory representing G045 absolute jurisdiction."
+    }
+  }
+}

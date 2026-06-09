@@ -1,0 +1,31 @@
+# ── 子项目（各自有独立 git 仓库） ──
+/ExoCore/
+/ExoCore-Desktop/
+/ExocoreExtension/
+/Exocore-ui-legency/
+
+# ── 静态数据 & 发布 ──
+/ExocoreData/
+/ExoCore-Release/
+
+# ── SSL 证书（本地开发用，不进仓库） ──
+/mkcertpem/
+
+# ── Claude Code 会话数据 ──
+/.claude/
+/.superpowers/
+
+# ── 日志 ──
+*.log
+
+# ── Python ──
+__pycache__/
+*.pyc
+
+# ── IDE ──
+.idea/
+.vscode/
+
+# ── 系统文件 ──
+Thumbs.db
+Desktop.ini

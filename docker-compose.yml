@@ -1,0 +1,65 @@
+# ⚠️ 参考用 — 日常开发不再使用 docker-compose。
+# 后端本地裸跑，前端已迁移至 ExoCore-Desktop (Tauri)，
+# Docker 只跑 pgvector 一个容器。
+# 此文件保留作为全容器化打包的参考配置。
+services:
+
+  # ── 后端：Django + Gunicorn ────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./ExoCore        # Dockerfile 在 ExoCore/ 目录下
+    image: exocore-backend:latest
+    env_file:
+      - ./ExoCore/.env           # 注入 SECRET_KEY、GEMINI_API_KEY 等
+    environment:
+      - ALLOWED_HOSTS=localhost,127.0.0.1,backend,192.168.178.25,100.111.70.110
+      - CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1,http://192.168.178.25,http://100.111.70.110
+      # 容器内 127.0.0.1 指向容器自身，必须用 host.docker.internal 指向宿主机
+      - DATABASE_URL=postgres://postgres:exocore_dev@host.docker.internal:5432/exocore
+      - LOCAL_LLM_API=http://host.docker.internal:11434/api/generate
+      # 覆盖宿主机路径，指向容器内挂载点
+      - MEMORY_BASE_DIR=/mnt/exocoredata
+      - GOOGLE_CALENDAR_CREDENTIALS_JSON=/mnt/exocoredata/LocalData/exocore-045-f2479c4cd2f5.json
+    volumes:
+      # 持久化 SQLite 数据库和 Agent 记忆文件
+      - ./ExoCore/db.sqlite3:/app/db.sqlite3
+      - ./ExoCore/AgentMemory:/app/AgentMemory
+      # 调试日志持久化（DEBUG_PAYLOAD + INJECTION_LOG_ENABLED）
+      - ./ExoCore/debug_log:/app/debug_log
+      - ./ExoCore/staticfiles/InjectionLog:/app/staticfiles/InjectionLog
+      # ExoCoreData 目录：cache、凭证文件等
+      - D:/Alicia/ExoCore_Project/ExocoreData:/mnt/exocoredata
+      # 如需挂载知识库目录，取消注释并修改宿主机路径：
+      # - D:/Alicia/Tales-on-leaves:/mnt/knowledge_base
+      # 热更新：挂载源码目录，配合 --reload 无需重建镜像
+      - ./ExoCore/agents:/app/agents
+      - ./ExoCore/config:/app/config
+      - ./ExoCore/core:/app/core
+      - ./ExoCore/council:/app/council
+      - ./ExoCore/engines:/app/engines
+      - ./ExoCore/ExoCore:/app/ExoCore
+      - ./ExoCore/memory:/app/memory
+      - ./ExoCore/scheduler:/app/scheduler
+      - ./ExoCore/tasks:/app/tasks
+      - ./ExoCore/telemetry:/app/telemetry
+      - ./ExoCore/templates:/app/templates
+      - ./ExoCore/manage.py:/app/manage.py
+    command: >
+      gunicorn --bind 0.0.0.0:8000 --workers 1 --worker-class gthread --threads 4 --timeout 600
+               --reload ExoCore.wsgi:application
+    ports:
+      - "8000:8000"              # 本地直接访问后端（可选，方便调试）
+    restart: unless-stopped
+
+  # ── 前端：Vite 构建产物 + nginx ────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./Exocore-ui     # Dockerfile 在 Exocore-ui/ 目录下
+    image: exocore-frontend:latest
+    volumes:
+      - ./Exocore-ui/dist:/usr/share/nginx/html
+    ports:
+      - "80:80"                  # 主入口：http://localhost
+    depends_on:
+      - backend
+    restart: unless-stopped
