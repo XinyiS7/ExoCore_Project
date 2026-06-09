@@ -126,7 +126,7 @@ function Start-Django {
 
     if ($PythonProvider -and $PythonProvider.StartsWith('conda:')) {
         $condaExe = $PythonProvider.Substring(6)
-        $cmdArgs = "/c $condaExe run -n exocore_project python.exe -u manage.py runserver 127.0.0.1:${DjangoPort} > $DjangoLog 2>&1"
+        $cmdArgs = "/c $condaExe run -n exocore_project python.exe -u manage.py runserver 0.0.0.0:${DjangoPort} > $DjangoLog 2>&1"
         $proc = Start-Process -FilePath cmd.exe `
             -ArgumentList $cmdArgs `
             -WorkingDirectory $ExoCoreDir `
