@@ -85,6 +85,22 @@ Dev mode: Vite dev servers (:5173/:5174/:5175) proxy /api → :8000 directly.
 - Per-file checkpointing in multi-step plans
 - No force push, no skip-hooks
 
+## Agent Skills (OpenCode)
+
+Two-tier skill architecture. OpenCode launched from any subproject sees both tiers via the subproject's `opencode.json` (`skills.paths` field pointing back here). Nested-git discovery stops at the subproject's own `.git`, so the `skills.paths` bridge is required to reach this outer shared dir.
+
+| Tier | Location | Contents | Tracked by |
+|---|---|---|---|
+| Shared | `.agents/skills/` (this repo) | Cross-subproject methodology skills | this repo |
+| Subproject-specific | `<subproject>/.agents/skills/` | Per-module workflows (e.g. ExoCore's `opencode-helper`) | each subproject's own repo |
+
+**Currently shared** (`.agents/skills/`):
+- `brainstorming`, `systematic-debugging`, `verification-before-completion`, `writing-skills` — vendored from [obra/superpowers](https://github.com/obra/superpowers) v6.0.3 (MIT). Provenance, exclusions, and known dangling refs documented in `.agents/skills/THIRD_PARTY_SKILLS.md`.
+
+**Onboarding a new subproject**: drop an `opencode.json` at the subproject root with `skills.paths` set to `["../.agents/skills"]`. See `ExoCore/opencode.json` for the canonical shape.
+
+**Why not the superpowers plugin**: the plugin injects a mandatory TDD + git-worktrees + subagent workflow that conflicts with ExoCore's `Plan/` template and "no auto-commit" rule. Vendoring a subset avoids the conflict. Full rationale in `THIRD_PARTY_SKILLS.md`.
+
 ## Development Workflow
 
 ### Mobile & LAN Access
